@@ -1,112 +1,70 @@
 import React from 'react';
-import { useFormik } from 'formik';
+import { Formik, Form, Field, ErrorMessage } from 'formik';
+import * as Yup from 'yup'
+import TextError from './TextError';
 
 const initialValues = {
   name: '',
   email: '',
-  message: '',
   nachricht: '',
 }
 
 const onSubmit = (values) => {
   console.log(values);
+  
 }
 
-const validate = (values) => {
-  //3 conditions
-  //values.name values.email values.message
-  //errors.name errors.email errors.message
-  //errors.name= "Required"
-let errors = {}
 
-if(!values.name) {
-errors.name = ("Pflichtfeld")
-}
+// Yup
+const validationSchema = Yup.object({
+  name: Yup.string().required("Pflichfeld"),
+  email: Yup.string().email('Bitte geben Sie eine gültige E-Mail Adresse an').required('Pflichfeld'),
+  nachricht: Yup.string().required("Pflichfeld"),
+})
 
-if(!values.email) {
-errors.email = ("Pflichtfeld")
-} else if(!/^[A-Z0-9._%+-]+@[A-Z0-9.-]+\.[A-Z]{2,4}$/i.test(values.email)
-)
-
-if(!values.message) {
-  errors.message = ("Pflichtfeld")
-  }
-
-if(!values.nachricht) {
-  errors.nachricht = ("Pflichtfeld")
-  }
-
-return errors
-
-}
-
-const Form = () => {
-  const formik = useFormik({
-    initialValues,
-    onSubmit,
-    validate 
-  });
-
-  console.log(formik.touched);
-  console.log(formik.errors.message);
+const contactForm = () => {
+  
 
   return (
-    <div>
-      <form onSubmit={formik.handleSubmit}>
+
+    <Formik initialValues = {initialValues} validationSchema={validationSchema} onSubmit={onSubmit}>
+      <Form>
         <div className="form-control">
-        <label htmlFor="name">Name</label>
-        <input
+        <label htmlFor="name">Name<sup>*</sup></label>
+        <Field
           type="text"
           id="name"
           name="name"
-          onChange={formik.handleChange}
-          onBlur={formik.handleBlur}
-          value={formik.values.name}
         />
-        {formik.touched.name && formik.errors.name ? <div className="error">{formik.errors.name}</div> : null}
-        </div>
+        <ErrorMessage name="name" component={TextError}/> 
+       </div>
         <div className="form-control">
-        <label htmlFor="email">Email</label>
-        <input
+        <label htmlFor="email">Email<sup>*</sup></label>
+        <Field
           type="email"
           id="email"
           name="email"
-          onChange={formik.handleChange}
-          onBlur={formik.handleBlur}
-          value={formik.values.email}
         />
-        {formik.touched.email && formik.errors.email ? <div className="error">{formik.errors.email}</div> : null}
+        <ErrorMessage name="email" component={TextError}/> 
         </div>
+       
         <div className="form-control">
-        <label htmlFor="message">Ihre Nachricht</label>
-        <input
-          type="text"
-          id="message"
-          name="message"
-          onChange={formik.handleChange}
-          onBlur={formik.handleBlur}
-          value={formik.values.message}
-        />
-        {formik.touched.message && formik.errors.message ? <div className="error">{formik.errors.message}</div> : null}
-        </div>
-        <div className="form-control">
-        <label htmlFor="nachricht">Nachricht</label>
-        <input
-          type="text"
+        <label htmlFor="nachricht">Nachricht<sup>*</sup></label>
+        <Field
+          as="textarea"
           id="nachricht"
           name="nachricht"
-          onChange={formik.handleChange}
-          onBlur={formik.handleBlur}
-          value={formik.values.nachricht}
         />
-        {formik.touched.nachricht && formik.errors.nachricht ? <div className="error">{formik.errors.nachricht}</div> : null}
-        </div>
-        <button type="submit">Submit</button>
+        <ErrorMessage name="nachricht" component={TextError}/> 
+        <div><sup>*</sup> bitte ausfüllen</div>
 
-       
-      </form>
-    </div>
+        </div>
+
+        <button type="submit">Submit</button>
+      </Form>
+
+    </Formik>
   );
 };
 
-export default Form;
+export default contactForm;
